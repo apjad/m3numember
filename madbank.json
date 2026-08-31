@@ -1,0 +1,44 @@
+{
+  "meals": [
+    {
+      "name": "Frikadeller",
+      "recipeURL": "",
+      "items": ["Hakket svinekød", "Kartofler", "Persillesovs"]
+    },
+    {
+      "name": "Lasagne",
+      "recipeURL": "valdemarsro.dk/lasagne",
+      "items": ["Hakket oksekød", "Lasagneplader", "Tomater", "Ost"]
+    },
+    {
+      "name": "Kylling i karry",
+      "recipeURL": "",
+      "items": ["Kyllingefilet", "Karry", "Kokosmælk", "Ris"]
+    },
+    {
+      "name": "Boller i karry",
+      "recipeURL": "",
+      "items": ["Hakket svinekød", "Karry", "Ris"]
+    },
+    {
+      "name": "Burgere",
+      "recipeURL": "",
+      "items": ["Burgerboller", "Hakket oksekød", "Salat"]
+    },
+    {
+      "name": "Stegt flæsk",
+      "recipeURL": "",
+      "items": ["Flæsk", "Kartofler", "Persillesovs"]
+    },
+    {
+      "name": "Taco",
+      "recipeURL": "",
+      "items": ["Tacoskaller", "Hakket oksekød", "Creme fraiche"]
+    },
+    {
+      "name": "Pizza",
+      "recipeURL": "",
+      "items": ["Pizzabund", "Mozzarella", "Tomatsauce"]
+    }
+  ]
+}
