@@ -435,6 +435,19 @@
         "chili",
         "krydderier"
       ]
+    },
+    {
+      "name": "Mørbradgryde med ris",
+      "recipeURL": "",
+      "items": [
+        "Svinemørbrad",
+        "Bacon",
+        "Champignon",
+        "Løg",
+        "Fløde",
+        "Paprika",
+        "Ris"
+      ]
     }
   ]
 }
