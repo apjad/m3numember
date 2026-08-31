@@ -305,6 +305,14 @@
       "items": [
         "ForrårsRuller"
       ]
+    },
+    {
+      "name": "Rugebrøds madder",
+      "recipeURL": "",
+      "items": [
+        "Rugebrød",
+        "div pålæg"
+      ]
     }
   ]
 }
