@@ -130,17 +130,6 @@
       ]
     },
     {
-      "name": "Lasagne m. salat",
-      "recipeURL": "",
-      "items": [
-        "Hakket oksekød",
-        "Lasagneplader",
-        "Tomater",
-        "Ost",
-        "Salat"
-      ]
-    },
-    {
       "name": "Pasta med bacon og fløde",
       "recipeURL": "",
       "items": [
@@ -197,16 +186,6 @@
         "Hakket oksekød",
         "Ost",
         "Majs"
-      ]
-    },
-    {
-      "name": "Burgere m. agurk",
-      "recipeURL": "",
-      "items": [
-        "Burgerboller",
-        "Hakket oksekød",
-        "Salat",
-        "Agurk"
       ]
     },
     {
@@ -268,32 +247,12 @@
       ]
     },
     {
-      "name": "Tacos m. majs",
-      "recipeURL": "",
-      "items": [
-        "Tacoskaller",
-        "Hakket oksekød",
-        "Majs",
-        "Ost"
-      ]
-    },
-    {
       "name": "Pasta med bacon og tomat",
       "recipeURL": "",
       "items": [
         "Pasta",
         "Bacon",
         "Tomatsauce"
-      ]
-    },
-    {
-      "name": "Kyllingebryst med karry",
-      "recipeURL": "",
-      "items": [
-        "Kyllingebryst",
-        "Ris",
-        "Karry",
-        "Kokosmælk"
       ]
     },
     {
