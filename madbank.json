@@ -8,7 +8,7 @@
     {
       "name": "Lasagne",
       "recipeURL": "valdemarsro.dk/lasagne",
-      "items": ["Hakket oksekød", "Lasagneplader", "Tomater", "Ost"]
+      "items": ["Hakket oksekød", "Lasagneplader", "Tomatersovs", "Ost"]
     },
     {
       "name": "Kylling i karry",
@@ -23,22 +23,22 @@
     {
       "name": "Burgere",
       "recipeURL": "",
-      "items": ["Burgerboller", "Hakket oksekød", "Salat"]
+      "items": ["Burgerboller", "Hakket oksekød", "Salat", "Agurk", "Bacon", "Ost"]
     },
     {
       "name": "Stegt flæsk",
       "recipeURL": "",
-      "items": ["Flæsk", "Kartofler", "Persillesovs"]
+      "items": ["Flæsk", "Kartofler", "Persille"]
     },
     {
       "name": "Taco",
       "recipeURL": "",
-      "items": ["Tacoskaller", "Hakket oksekød", "Creme fraiche"]
+      "items": ["Tacoskaller", "Hakket oksekød", "Creme fraiche", "Salsa"]
     },
     {
       "name": "Pizza",
       "recipeURL": "",
-      "items": ["Pizzabund", "Mozzarella", "Tomatsauce"]
+      "items": ["Pizzabund", "Mozzarella", "Tomatsauce", "Pepperoni"]
     }
   ]
 }
