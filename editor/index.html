@@ -179,7 +179,7 @@
 <div class="footer-bar">
   <span id="status"></span>
   <button class="btn btn-secondary" onclick="load()">Genindlæs</button>
-  <button class="btn btn-primary" onclick="syncToGitHub()">Gem og synkroniser til GitHub</button>
+  <button class="btn btn-primary" onclick="syncToGitHub()">Synkroniser igen</button>
 </div>
 
 <script>
@@ -264,6 +264,14 @@ function escapeAttr(s) {
 // currently on disk — never a whole-array overwrite of a possibly-stale local snapshot. That's
 // what makes it safe for two people to edit at the same time without one silently wiping the
 // other's new dishes.
+// Every mutation auto-syncs to GitHub server-side right after saving locally — no separate
+// "husk at synkronisere" step to forget. syncMessage() turns that result into one status line.
+function syncMessage(localMsg, sync) {
+  if (!sync) return localMsg;
+  if (!sync.ok) return localMsg + ' Kunne ikke synkronisere til GitHub: ' + (sync.log || sync.step) + ' — prøv "Synkroniser igen".';
+  return localMsg + (sync.changed ? ' Sendt til GitHub — live om et øjeblik.' : '');
+}
+
 async function mutate(url, method, body, busyMsg) {
   setStatus(busyMsg);
   try {
@@ -275,13 +283,13 @@ async function mutate(url, method, body, busyMsg) {
     const data = await res.json();
     if (!data.ok) {
       setStatus(data.error || 'Noget gik galt', 'err');
-      return false;
+      return null;
     }
     meals = data.meals;
-    return true;
+    return data;
   } catch (e) {
     setStatus('Kunne ikke kontakte serveren: ' + e, 'err');
-    return false;
+    return null;
   }
 }
 
@@ -291,18 +299,18 @@ async function saveMeal(i, originalName) {
     recipeURL: document.getElementById(`url-${i}`).value.trim(),
     items: document.getElementById(`items-${i}`).value.split('\n').map(s => s.trim()).filter(Boolean)
   };
-  const ok = await mutate('/api/meals/' + encodeURIComponent(originalName), 'PUT', updated, 'Gemmer…');
-  if (!ok) return;
-  setStatus('Gemt — husk at synkronisere til GitHub.', 'ok');
+  const data = await mutate('/api/meals/' + encodeURIComponent(originalName), 'PUT', updated, 'Gemmer…');
+  if (!data) return;
+  setStatus(syncMessage('Gemt.', data.sync), data.sync && !data.sync.ok ? 'err' : 'ok');
   openIndex = null;
   render();
 }
 
 async function deleteMeal(i, name) {
   if (!confirm(`Slet "${name}"?`)) return;
-  const ok = await mutate('/api/meals/' + encodeURIComponent(name), 'DELETE', null, 'Sletter…');
-  if (!ok) return;
-  setStatus('Slettet — husk at synkronisere til GitHub.', 'ok');
+  const data = await mutate('/api/meals/' + encodeURIComponent(name), 'DELETE', null, 'Sletter…');
+  if (!data) return;
+  setStatus(syncMessage('Slettet.', data.sync), data.sync && !data.sync.ok ? 'err' : 'ok');
   openIndex = null;
   render();
 }
@@ -312,12 +320,12 @@ async function addMeal() {
   const url = document.getElementById('newUrl').value.trim();
   const items = document.getElementById('newItems').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!name) { setStatus('Retten skal have et navn', 'err'); return; }
-  const ok = await mutate('/api/meals', 'POST', { name, recipeURL: url, items }, 'Tilføjer…');
-  if (!ok) return;
+  const data = await mutate('/api/meals', 'POST', { name, recipeURL: url, items }, 'Tilføjer…');
+  if (!data) return;
   document.getElementById('newName').value = '';
   document.getElementById('newUrl').value = '';
   document.getElementById('newItems').value = '';
-  setStatus('Tilføjet — husk at synkronisere til GitHub.', 'ok');
+  setStatus(syncMessage('Tilføjet.', data.sync), data.sync && !data.sync.ok ? 'err' : 'ok');
   render();
 }
 

@@ -191,7 +191,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send_json(409, {"error": f'"{new_meal["name"]}" findes allerede'})
             meals.append(new_meal)
             save_meals_unlocked(meals)
-        self._send_json(200, {"ok": True, "meals": meals})
+        self._send_json(200, {"ok": True, "meals": meals, "sync": self._run_sync()})
 
     def _edit_meal(self, original_name):
         try:
@@ -210,7 +210,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send_json(409, {"error": f'"{updated["name"]}" findes allerede'})
             meals[index] = updated
             save_meals_unlocked(meals)
-        self._send_json(200, {"ok": True, "meals": meals})
+        self._send_json(200, {"ok": True, "meals": meals, "sync": self._run_sync()})
 
     def _delete_meal(self, original_name):
         with FILE_LOCK:
@@ -220,7 +220,7 @@ class Handler(BaseHTTPRequestHandler):
                 save_meals_unlocked(filtered)
             meals = filtered
         # Already gone (someone else deleted it too) is a benign race, not an error.
-        self._send_json(200, {"ok": True, "meals": meals})
+        self._send_json(200, {"ok": True, "meals": meals, "sync": self._run_sync()})
 
     def _suggest_items(self, name):
         prompt = (
