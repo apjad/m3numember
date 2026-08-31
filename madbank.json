@@ -394,6 +394,20 @@
         "sukker",
         "kanel"
       ]
+    },
+    {
+      "name": "Pulled pork burger",
+      "recipeURL": "",
+      "items": [
+        "svinenakke",
+        "burgerboller",
+        "BBQ-sauce",
+        "hvidkål",
+        "rødløg",
+        "cheddarost",
+        "mayonnaise",
+        "syltede agurker"
+      ]
     }
   ]
 }
