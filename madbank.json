@@ -39,6 +39,131 @@
       "name": "Pizza",
       "recipeURL": "",
       "items": ["Pizzabund", "Mozzarella", "Tomatsauce", "Pepperoni"]
+    },
+    {
+      "name": "Spaghetti med kødsovs",
+      "recipeURL": "",
+      "items": ["Spaghetti", "Hakket oksekød", "Tomater", "Løg", "Hvidløg"]
+    },
+    {
+      "name": "Pitabrød med hakket oksekød, salat og dressing",
+      "recipeURL": "",
+      "items": ["Pitabrød", "Hakket oksekød", "Salat", "Dressing"]
+    },
+    {
+      "name": "Fiskefrikadeller med rugbrød og grønt",
+      "recipeURL": "",
+      "items": ["Fiskefrikadeller", "Rugbrød", "Grøntsager"]
+    },
+    {
+      "name": "Tortillas med oksekød, majs og ost",
+      "recipeURL": "",
+      "items": ["Tortillas", "Hakket oksekød", "Majs", "Ost"]
+    },
+    {
+      "name": "Hjemmelavet pizza med skinke og ost",
+      "recipeURL": "",
+      "items": ["Pizzabund", "Skinke", "Ost", "Tomatsauce"]
+    },
+    {
+      "name": "Lasagne med salat",
+      "recipeURL": "",
+      "items": ["Hakket oksekød", "Lasagneplader", "Tomater", "Ost", "Salat"]
+    },
+    {
+      "name": "Pasta med bacon, fløde og ærter",
+      "recipeURL": "",
+      "items": ["Pasta", "Bacon", "Fløde", "Ærter"]
+    },
+    {
+      "name": "Frikadeller med pasta og grøntsager",
+      "recipeURL": "",
+      "items": ["Hakket svinekød", "Pasta", "Grøntsager"]
+    },
+    {
+      "name": "Hotdogs",
+      "recipeURL": "",
+      "items": ["Hotdogpølser", "Hotdogbrød", "Ketchup", "Sennep", "Ristede løg"]
+    },
+    {
+      "name": "Pasta med kødboller og tomatsovs",
+      "recipeURL": "",
+      "items": ["Pasta", "Kødboller", "Tomatsauce"]
+    },
+    {
+      "name": "Toast med skinke og ost og grøntsagsstave",
+      "recipeURL": "",
+      "items": ["Toastbrød", "Skinke", "Ost", "Grøntsager"]
+    },
+    {
+      "name": "Nachos med hakket oksekød, ost og majs",
+      "recipeURL": "",
+      "items": ["Nachochips", "Hakket oksekød", "Ost", "Majs"]
+    },
+    {
+      "name": "Burgere med salat og agurk",
+      "recipeURL": "",
+      "items": ["Burgerboller", "Hakket oksekød", "Salat", "Agurk"]
+    },
+    {
+      "name": "Pølser med pasta og mild tomatsovs",
+      "recipeURL": "",
+      "items": ["Pølser", "Pasta", "Tomatsauce"]
+    },
+    {
+      "name": "Makaroni med kødsovs og ost",
+      "recipeURL": "",
+      "items": ["Makaroni", "Hakket oksekød", "Tomater", "Ost"]
+    },
+    {
+      "name": "Kyllingebryst i tortilla med salat og dressing",
+      "recipeURL": "",
+      "items": ["Kyllingebryst", "Tortillas", "Salat", "Dressing"]
+    },
+    {
+      "name": "Fiskefileter med rugbrød og grøntsager",
+      "recipeURL": "",
+      "items": ["Fiskefileter", "Rugbrød", "Grøntsager"]
+    },
+    {
+      "name": "Pasta med skinke, fløde og ærter",
+      "recipeURL": "",
+      "items": ["Pasta", "Skinke", "Fløde", "Ærter"]
+    },
+    {
+      "name": "Pitapizza med skinke og ost",
+      "recipeURL": "",
+      "items": ["Pitabrød", "Skinke", "Ost", "Tomatsauce"]
+    },
+    {
+      "name": "Tacos med hakket oksekød, majs og ost",
+      "recipeURL": "",
+      "items": ["Tacoskaller", "Hakket oksekød", "Majs", "Ost"]
+    },
+    {
+      "name": "Pasta med bacon og tomatsovs",
+      "recipeURL": "",
+      "items": ["Pasta", "Bacon", "Tomatsauce"]
+    },
+    {
+      "name": "Kyllingebryst med ris og mild karrysovs",
+      "recipeURL": "",
+      "items": ["Kyllingebryst", "Ris", "Karry", "Kokosmælk"]
+    },
+    {
+      "name": "Rugbrød med æg, fiskefrikadeller og grønt",
+      "recipeURL": "",
+      "items": ["Rugbrød", "Æg", "Fiskefrikadeller", "Grøntsager"]
+    },
+    {
+      "name": "Tortillapizza med skinke og ost",
+      "recipeURL": "",
+      "items": ["Tortillas", "Skinke", "Ost", "Tomatsauce"]
+    },
+    {
+      "name": "Pølser med ris og grøntsager",
+      "recipeURL": "",
+      "items": ["Pølser", "Ris", "Grøntsager"]
     }
   ]
 }
