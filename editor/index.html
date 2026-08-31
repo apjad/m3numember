@@ -170,6 +170,7 @@
     <input type="text" id="newUrl" placeholder="Opskriftslink (valgfrit)">
     <textarea id="newItems" placeholder="Varer — én pr. linje"></textarea>
     <div class="meal-actions">
+      <button class="btn btn-secondary" id="suggestBtn" onclick="suggestItems()">✨ Hent varer med AI</button>
       <button class="btn btn-primary" onclick="addMeal()">Tilføj</button>
     </div>
   </div>
@@ -304,6 +305,36 @@ function addMeal() {
       render();
     }
   });
+}
+
+async function suggestItems() {
+  const name = document.getElementById('newName').value.trim();
+  if (!name) { setStatus('Skriv et navn på retten først', 'err'); return; }
+  const btn = document.getElementById('suggestBtn');
+  btn.disabled = true;
+  btn.textContent = 'Henter…';
+  setStatus('Spørger AI om varer til "' + name + '"…');
+  try {
+    const res = await fetch('/api/suggest-items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      setStatus('Fejl: ' + data.error, 'err');
+      return;
+    }
+    const box = document.getElementById('newItems');
+    const existing = box.value.split('\n').map(s => s.trim()).filter(Boolean);
+    box.value = Array.from(new Set([...existing, ...data.items])).join('\n');
+    setStatus('Varer hentet — tjek listen før du tilføjer.', 'ok');
+  } catch (e) {
+    setStatus('Kunne ikke kontakte AI: ' + e, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Hent varer med AI';
+  }
 }
 
 async function syncToGitHub() {

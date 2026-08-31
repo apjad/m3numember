@@ -19,27 +19,30 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MADBANK_PATH = os.path.join(REPO_DIR, "madbank.json")
 CREDS_PATH = os.path.expanduser("~/agentclaude/madbank-editor-credentials.local")
+GROK_BIN = os.path.expanduser("~/.grok/bin/grok")
 PORT = 8420
 
 
 def load_credentials():
-    user, password = None, None
+    """One 'username:password' per line; '#'-prefixed and blank lines are ignored."""
+    users = {}
     try:
         with open(CREDS_PATH) as f:
             for line in f:
                 line = line.strip()
-                if line.startswith("export MADBANK_EDITOR_USER="):
-                    user = line.split("=", 1)[1].strip('"')
-                elif line.startswith("export MADBANK_EDITOR_PASS="):
-                    password = line.split("=", 1)[1].strip('"')
+                if not line or line.startswith("#"):
+                    continue
+                username, sep, password = line.partition(":")
+                if sep and username and password:
+                    users[username] = password
     except FileNotFoundError:
         pass
-    if not user or not password:
+    if not users:
         sys.exit(f"Mangler login i {CREDS_PATH} — kan ikke starte serveren uden.")
-    return user, password
+    return users
 
 
-AUTH_USER, AUTH_PASS = load_credentials()
+AUTH_USERS = load_credentials()
 INDEX_HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
 
 
@@ -79,7 +82,7 @@ class Handler(BaseHTTPRequestHandler):
             user, _, password = decoded.partition(":")
         except Exception:
             return False
-        return user == AUTH_USER and password == AUTH_PASS
+        return AUTH_USERS.get(user) == password
 
     def _require_auth(self):
         self.send_response(401)
@@ -136,11 +139,46 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self._check_auth():
             return self._require_auth()
-        if self.path != "/api/sync":
-            self.send_response(404)
-            self.end_headers()
-            return
-        self._send_json(200, self._run_sync())
+        if self.path == "/api/sync":
+            return self._send_json(200, self._run_sync())
+        if self.path == "/api/suggest-items":
+            length = int(self.headers.get("Content-Length", 0))
+            raw = self.rfile.read(length)
+            try:
+                name = json.loads(raw).get("name", "").strip()
+            except json.JSONDecodeError:
+                name = ""
+            if not name:
+                return self._send_json(400, {"error": "Mangler navn på retten"})
+            return self._send_json(200, self._suggest_items(name))
+        self.send_response(404)
+        self.end_headers()
+
+    def _suggest_items(self, name):
+        prompt = (
+            f"List the typical grocery/shopping-list ingredients for the Danish home-cooking "
+            f'dish "{name}". Respond with 4-8 short Danish ingredient names, shopping-list '
+            f"style (not steps or instructions)."
+        )
+        schema = json.dumps({
+            "type": "object",
+            "properties": {"items": {"type": "array", "items": {"type": "string"}}},
+            "required": ["items"],
+        })
+        try:
+            result = subprocess.run(
+                [GROK_BIN, "-p", prompt, "--json-schema", schema, "--disable-web-search"],
+                capture_output=True, text=True, timeout=90,
+            )
+        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+            return {"ok": False, "error": str(e)}
+        if result.returncode != 0:
+            return {"ok": False, "error": result.stderr.strip() or "grok fejlede"}
+        try:
+            items = json.loads(result.stdout)["structuredOutput"]["items"]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return {"ok": False, "error": "Kunne ikke aflæse svar fra AI"}
+        return {"ok": True, "items": [str(i).strip() for i in items if str(i).strip()]}
 
     def _run_sync(self):
         def run(*args):
@@ -170,7 +208,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"Madbank-editor kører på http://localhost:{PORT}  (login: {AUTH_USER} / se {CREDS_PATH})")
+    print(f"Madbank-editor kører på http://localhost:{PORT}  ({len(AUTH_USERS)} bruger(e), se {CREDS_PATH})")
     print("Tryk Ctrl+C for at stoppe.")
     try:
         server.serve_forever()
