@@ -207,7 +207,8 @@ function render() {
   list.innerHTML = '';
   const filtered = meals
     .map((m, i) => ({ m, i }))
-    .filter(({ m }) => !q || m.name.toLowerCase().includes(q));
+    .filter(({ m }) => !q || m.name.toLowerCase().includes(q))
+    .sort((a, b) => a.m.name.localeCompare(b.m.name, 'da'));
 
   document.getElementById('countSub').textContent =
     meals.length + ' retter i madbanken' + (q ? ' · ' + filtered.length + ' matcher' : '');
