@@ -408,6 +408,19 @@
         "mayonnaise",
         "syltede agurker"
       ]
+    },
+    {
+      "name": "Æggekage med bacon",
+      "recipeURL": "",
+      "items": [
+        "æg",
+        "bacon",
+        "mælk",
+        "smør",
+        "purløg",
+        "salt",
+        "peber"
+      ]
     }
   ]
 }
