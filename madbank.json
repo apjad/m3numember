@@ -497,6 +497,15 @@
       "items": [
         "Wolt"
       ]
+    },
+    {
+      "name": "Paneret kylling",
+      "recipeURL": "",
+      "items": [
+        "Kyllingebryst",
+        "Rasp",
+        "Æg"
+      ]
     }
   ]
 }
