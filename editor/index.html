@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Madbank</title>
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --card: #ffffff;
+    --border: #e2ddd3;
+    --text: #2b2620;
+    --muted: #8a8177;
+    --accent: #d9702e;
+    --accent2: #5a8f4f;
+    --danger: #c0392b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 100px;
+  }
+  header {
+    padding: 20px 20px 12px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+  .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    max-width: 720px;
+    margin: 0 auto 8px;
+    padding: 0 20px;
+  }
+  input[type=text], input[type=search] {
+    font: inherit;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    width: 100%;
+  }
+  .btn {
+    font: inherit;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid transparent; }
+  .btn-danger:hover { background: #fbeae8; }
+  .btn:active { transform: scale(0.97); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+
+  .meal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .meal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+  .meal-title { font-weight: 700; font-size: 1.05rem; }
+  .meal-count { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+  .chevron { color: var(--muted); transition: transform 0.15s; font-size: 0.85rem; }
+  .meal.open .chevron { transform: rotate(90deg); }
+
+  .meal-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .meal.open .meal-body { display: block; }
+  .field-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    margin: 12px 0 6px;
+  }
+  textarea {
+    font: inherit;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 90px;
+  }
+  .meal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .add-card {
+    background: var(--card);
+    border: 1.5px dashed var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin: 16px 0 24px;
+  }
+  .add-card h2 { font-size: 1rem; margin: 0 0 10px; }
+  .add-card input, .add-card textarea { margin-bottom: 8px; }
+
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+  }
+  #status { font-size: 0.85rem; color: var(--muted); }
+  #status.ok { color: var(--accent2); }
+  #status.err { color: var(--danger); }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Madbank</h1>
+  <div class="sub" id="countSub">Henter…</div>
+</header>
+
+<div class="toolbar">
+  <input type="search" id="search" placeholder="Søg efter ret…">
+</div>
+
+<main>
+  <div id="list"></div>
+
+  <div class="add-card">
+    <h2>+ Tilføj ny ret</h2>
+    <input type="text" id="newName" placeholder="Navn på retten">
+    <input type="text" id="newUrl" placeholder="Opskriftslink (valgfrit)">
+    <textarea id="newItems" placeholder="Varer — én pr. linje"></textarea>
+    <div class="meal-actions">
+      <button class="btn btn-primary" onclick="addMeal()">Tilføj</button>
+    </div>
+  </div>
+</main>
+
+<div class="footer-bar">
+  <span id="status"></span>
+  <button class="btn btn-secondary" onclick="load()">Genindlæs</button>
+  <button class="btn btn-primary" onclick="syncToGitHub()">Gem og synkroniser til GitHub</button>
+</div>
+
+<script>
+let meals = [];
+let openIndex = null;
+
+function setStatus(text, cls) {
+  const el = document.getElementById('status');
+  el.textContent = text;
+  el.className = cls || '';
+}
+
+async function load() {
+  setStatus('Henter…');
+  const res = await fetch('/api/meals');
+  const data = await res.json();
+  meals = data.meals;
+  render();
+  setStatus('');
+}
+
+function render() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  const filtered = meals
+    .map((m, i) => ({ m, i }))
+    .filter(({ m }) => !q || m.name.toLowerCase().includes(q));
+
+  document.getElementById('countSub').textContent =
+    meals.length + ' retter i madbanken' + (q ? ' · ' + filtered.length + ' matcher' : '');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">Ingen retter fundet.</div>';
+    return;
+  }
+
+  for (const { m, i } of filtered) {
+    const card = document.createElement('div');
+    card.className = 'meal' + (openIndex === i ? ' open' : '');
+
+    const head = document.createElement('div');
+    head.className = 'meal-head';
+    head.innerHTML = `
+      <div>
+        <div class="meal-title">${escapeHtml(m.name)}</div>
+        <div class="meal-count">${m.items.length} varer${m.recipeURL ? ' · har opskriftslink' : ''}</div>
+      </div>
+      <div class="chevron">▶</div>
+    `;
+    head.onclick = () => { openIndex = openIndex === i ? null : i; render(); };
+
+    const body = document.createElement('div');
+    body.className = 'meal-body';
+    body.innerHTML = `
+      <div class="field-label">Navn</div>
+      <input type="text" id="name-${i}" value="${escapeAttr(m.name)}">
+      <div class="field-label">Opskriftslink</div>
+      <input type="text" id="url-${i}" value="${escapeAttr(m.recipeURL || '')}">
+      <div class="field-label">Varer (én pr. linje)</div>
+      <textarea id="items-${i}">${escapeHtml(m.items.join('\n'))}</textarea>
+      <div class="meal-actions">
+        <button class="btn btn-danger" onclick="deleteMeal(${i})">Slet ret</button>
+        <button class="btn btn-primary" onclick="saveMeal(${i})">Gem ændring</button>
+      </div>
+    `;
+
+    card.appendChild(head);
+    card.appendChild(body);
+    list.appendChild(card);
+  }
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+function escapeAttr(s) {
+  return escapeHtml(s).replace(/"/g, '&quot;');
+}
+
+async function persist(successMsg) {
+  const res = await fetch('/api/meals', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ meals })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    setStatus(data.error || 'Fejl ved gemning', 'err');
+    return false;
+  }
+  setStatus(successMsg, 'ok');
+  return true;
+}
+
+function saveMeal(i) {
+  meals[i] = {
+    name: document.getElementById(`name-${i}`).value.trim(),
+    recipeURL: document.getElementById(`url-${i}`).value.trim(),
+    items: document.getElementById(`items-${i}`).value.split('\n').map(s => s.trim()).filter(Boolean)
+  };
+  persist('Gemt lokalt — husk at synkronisere til GitHub.').then(ok => { if (ok) { openIndex = null; render(); } });
+}
+
+function deleteMeal(i) {
+  if (!confirm(`Slet "${meals[i].name}"?`)) return;
+  meals.splice(i, 1);
+  openIndex = null;
+  persist('Slettet lokalt — husk at synkronisere til GitHub.').then(() => render());
+}
+
+function addMeal() {
+  const name = document.getElementById('newName').value.trim();
+  const url = document.getElementById('newUrl').value.trim();
+  const items = document.getElementById('newItems').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!name) { setStatus('Retten skal have et navn', 'err'); return; }
+  meals.push({ name, recipeURL: url, items });
+  persist('Tilføjet lokalt — husk at synkronisere til GitHub.').then(ok => {
+    if (ok) {
+      document.getElementById('newName').value = '';
+      document.getElementById('newUrl').value = '';
+      document.getElementById('newItems').value = '';
+      render();
+    }
+  });
+}
+
+async function syncToGitHub() {
+  setStatus('Synkroniserer…');
+  const res = await fetch('/api/sync', { method: 'POST' });
+  const data = await res.json();
+  if (!data.ok) {
+    setStatus('Fejl: ' + (data.log || data.step), 'err');
+    return;
+  }
+  setStatus(data.log, 'ok');
+}
+
+document.getElementById('search').addEventListener('input', render);
+load();
+</script>
+
+</body>
+</html>
