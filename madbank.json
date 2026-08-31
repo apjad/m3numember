@@ -358,7 +358,7 @@
     },
     {
       "name": "One-pot pasta med hakket oksekød",
-      "recipeURL": "",
+      "recipeURL": "https://madensverden.dk/one-pot-pasta/",
       "items": [
         "hakket oksekød",
         "pasta",
@@ -367,7 +367,10 @@
         "hakkede tomater",
         "fløde",
         "revet ost",
-        "bouillon"
+        "bouillon",
+        "balsamico",
+        "basilikum",
+        "oregano"
       ]
     },
     {
