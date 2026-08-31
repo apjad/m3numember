@@ -211,7 +211,7 @@
       "items": [
         "Makaroni",
         "Hakket oksekød",
-        "Tomater",
+        "Tomatersovs",
         "Ost"
       ]
     },
@@ -284,11 +284,11 @@
       ]
     },
     {
-      "name": "Pølser med ris",
+      "name": "Pølser med Promfritter",
       "recipeURL": "",
       "items": [
         "Pølser",
-        "Ris",
+        "Promfritter",
         "Grøntsager"
       ]
     },
@@ -297,6 +297,13 @@
       "recipeURL": "",
       "items": [
         "Nuggets"
+      ]
+    },
+    {
+      "name": "Forrårs Ruller",
+      "recipeURL": "",
+      "items": [
+        "ForrårsRuller"
       ]
     }
   ]
