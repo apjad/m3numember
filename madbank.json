@@ -462,6 +462,19 @@
         "Ketchup",
         "Ristede løg"
       ]
+    },
+    {
+      "name": "Lasagnette",
+      "recipeURL": "",
+      "items": [
+        "lasagnette",
+        "hakket oksekød",
+        "løg",
+        "hakkede tomater",
+        "hvidløg",
+        "revet ost",
+        "fløde"
+      ]
     }
   ]
 }
