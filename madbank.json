@@ -328,6 +328,20 @@
         "Creme fraiche",
         "Revet ost"
       ]
+    },
+    {
+      "name": "Pastasalat",
+      "recipeURL": "",
+      "items": [
+        "pasta",
+        "majonæs",
+        "creme fraiche",
+        "skinke",
+        "ost",
+        "agurk",
+        "peberfrugt",
+        "majs"
+      ]
     }
   ]
 }
