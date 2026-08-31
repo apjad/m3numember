@@ -448,6 +448,20 @@
         "Paprika",
         "Ris"
       ]
+    },
+    {
+      "name": "Bøfsandwich",
+      "recipeURL": "",
+      "items": [
+        "Hakket oksekød",
+        "Burgerboller",
+        "Løg",
+        "Rødbeder",
+        "Agurkesalat",
+        "Remoulade",
+        "Ketchup",
+        "Ristede løg"
+      ]
     }
   ]
 }
