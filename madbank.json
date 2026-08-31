@@ -328,6 +328,47 @@
         "Creme fraiche",
         "Revet ost"
       ]
+    },
+    {
+      "name": "Pita med tunsalat",
+      "recipeURL": "https://mummum.dk/pitabroed-med-tunsalat/",
+      "items": [
+        "Pitabrød",
+        "Tun (dåse)",
+        "Mayonnaise",
+        "Løg",
+        "Agurk",
+        "Majs",
+        "Karry",
+        "Salat"
+      ]
+    },
+    {
+      "name": "Pandekager",
+      "recipeURL": "https://www.arla.dk/opskrifter/pandekager/",
+      "items": [
+        "Hvedemel",
+        "Æg",
+        "Mælk",
+        "Sukker",
+        "Smør",
+        "Salt",
+        "Vaniljesukker"
+      ]
+    },
+    {
+      "name": "Pastasalat",
+      "recipeURL": "https://www.foodfanatic.dk/pastasalat-med-karry-bacon-og-kylling",
+      "items": [
+        "Pasta",
+        "Majones",
+        "Skinke",
+        "Ost",
+        "Majs",
+        "Ærter",
+        "Peberfrugt",
+        "Agurk"
+      ]
     }
   ]
 }
