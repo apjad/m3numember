@@ -5,6 +5,12 @@ Serves a small UI to add/edit/delete dishes, plus a "Gem og synkroniser"
 action that commits and pushes madbank.json to GitHub (same repo the
 tilfoej-ret.sh / hent-liste.sh scripts already work against).
 
+Every mutation is scoped to a single dish (POST to add, PUT/DELETE by name)
+and is applied against whatever is on disk *at request time* — never a
+whole-list overwrite from a possibly-stale browser snapshot. That's the fix
+for a real data-loss incident: two people editing at once, and the one who
+saved last silently wiped out the other's new dishes.
+
 Protected with HTTP Basic Auth so it's safe to port-forward — credentials
 come from madbank-editor-credentials.local (sibling of this repo, one level
 up from agentclaude/m3numember-pages).
@@ -14,6 +20,8 @@ import json
 import os
 import subprocess
 import sys
+import threading
+import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +29,11 @@ MADBANK_PATH = os.path.join(REPO_DIR, "madbank.json")
 CREDS_PATH = os.path.expanduser("~/agentclaude/madbank-editor-credentials.local")
 GROK_BIN = os.path.expanduser("~/.grok/bin/grok")
 PORT = 8420
+
+# Guards every read-modify-write of madbank.json — the whole point of the
+# scoped-mutation design is defeated if two concurrent requests can still
+# interleave a read and a write.
+FILE_LOCK = threading.Lock()
 
 
 def load_credentials():
@@ -46,25 +59,26 @@ AUTH_USERS = load_credentials()
 INDEX_HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
 
 
-def validate_meals(payload):
-    if not isinstance(payload, dict) or not isinstance(payload.get("meals"), list):
-        raise ValueError("Forkert format: forventede {\"meals\": [...]}")
-    cleaned = []
-    seen_names = set()
-    for i, meal in enumerate(payload["meals"]):
-        if not isinstance(meal, dict):
-            raise ValueError(f"Ret #{i + 1} er ikke et gyldigt objekt")
-        name = str(meal.get("name", "")).strip()
-        if not name:
-            raise ValueError(f"Ret #{i + 1} mangler et navn")
-        key = name.lower()
-        if key in seen_names:
-            raise ValueError(f'"{name}" findes allerede — navne skal være unikke')
-        seen_names.add(key)
-        recipe_url = str(meal.get("recipeURL", "")).strip()
-        items = [str(item).strip() for item in meal.get("items", []) if str(item).strip()]
-        cleaned.append({"name": name, "recipeURL": recipe_url, "items": items})
-    return {"meals": cleaned}
+def clean_meal(meal, index_label):
+    if not isinstance(meal, dict):
+        raise ValueError(f"{index_label} er ikke et gyldigt objekt")
+    name = str(meal.get("name", "")).strip()
+    if not name:
+        raise ValueError(f"{index_label} mangler et navn")
+    recipe_url = str(meal.get("recipeURL", "")).strip()
+    items = [str(item).strip() for item in meal.get("items", []) if str(item).strip()]
+    return {"name": name, "recipeURL": recipe_url, "items": items}
+
+
+def load_meals_unlocked():
+    with open(MADBANK_PATH, encoding="utf-8") as f:
+        return json.load(f)["meals"]
+
+
+def save_meals_unlocked(meals):
+    with open(MADBANK_PATH, "w", encoding="utf-8") as f:
+        json.dump({"meals": meals}, f, indent=2, ensure_ascii=False)
+        f.write("\n")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -98,6 +112,17 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _read_json_body(self):
+        length = int(self.headers.get("Content-Length", 0))
+        raw = self.rfile.read(length)
+        return json.loads(raw)
+
+    def _meal_name_from_path(self, prefix):
+        """Decodes the '/api/meals/<name>' suffix, or None if the path doesn't match."""
+        if not self.path.startswith(prefix):
+            return None
+        return urllib.parse.unquote(self.path[len(prefix):])
+
     def do_GET(self):
         if not self._check_auth():
             return self._require_auth()
@@ -110,42 +135,23 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path == "/api/meals":
-            with open(MADBANK_PATH, encoding="utf-8") as f:
-                data = json.load(f)
-            self._send_json(200, data)
+            with FILE_LOCK:
+                meals = load_meals_unlocked()
+            self._send_json(200, {"meals": meals})
         else:
             self.send_response(404)
             self.end_headers()
 
-    def do_PUT(self):
-        if not self._check_auth():
-            return self._require_auth()
-        if self.path != "/api/meals":
-            self.send_response(404)
-            self.end_headers()
-            return
-        length = int(self.headers.get("Content-Length", 0))
-        raw = self.rfile.read(length)
-        try:
-            payload = json.loads(raw)
-            cleaned = validate_meals(payload)
-        except (json.JSONDecodeError, ValueError) as e:
-            return self._send_json(400, {"error": str(e)})
-        with open(MADBANK_PATH, "w", encoding="utf-8") as f:
-            json.dump(cleaned, f, indent=2, ensure_ascii=False)
-            f.write("\n")
-        self._send_json(200, {"ok": True, "count": len(cleaned["meals"])})
-
     def do_POST(self):
         if not self._check_auth():
             return self._require_auth()
+        if self.path == "/api/meals":
+            return self._add_meal()
         if self.path == "/api/sync":
             return self._send_json(200, self._run_sync())
         if self.path == "/api/suggest-items":
-            length = int(self.headers.get("Content-Length", 0))
-            raw = self.rfile.read(length)
             try:
-                name = json.loads(raw).get("name", "").strip()
+                name = self._read_json_body().get("name", "").strip()
             except json.JSONDecodeError:
                 name = ""
             if not name:
@@ -153,6 +159,68 @@ class Handler(BaseHTTPRequestHandler):
             return self._send_json(200, self._suggest_items(name))
         self.send_response(404)
         self.end_headers()
+
+    def do_PUT(self):
+        if not self._check_auth():
+            return self._require_auth()
+        original_name = self._meal_name_from_path("/api/meals/")
+        if original_name is None:
+            self.send_response(404)
+            self.end_headers()
+            return
+        self._edit_meal(original_name)
+
+    def do_DELETE(self):
+        if not self._check_auth():
+            return self._require_auth()
+        original_name = self._meal_name_from_path("/api/meals/")
+        if original_name is None:
+            self.send_response(404)
+            self.end_headers()
+            return
+        self._delete_meal(original_name)
+
+    def _add_meal(self):
+        try:
+            new_meal = clean_meal(self._read_json_body(), "Retten")
+        except (json.JSONDecodeError, ValueError) as e:
+            return self._send_json(400, {"error": str(e)})
+        with FILE_LOCK:
+            meals = load_meals_unlocked()
+            if any(m["name"].lower() == new_meal["name"].lower() for m in meals):
+                return self._send_json(409, {"error": f'"{new_meal["name"]}" findes allerede'})
+            meals.append(new_meal)
+            save_meals_unlocked(meals)
+        self._send_json(200, {"ok": True, "meals": meals})
+
+    def _edit_meal(self, original_name):
+        try:
+            updated = clean_meal(self._read_json_body(), "Retten")
+        except (json.JSONDecodeError, ValueError) as e:
+            return self._send_json(400, {"error": str(e)})
+        with FILE_LOCK:
+            meals = load_meals_unlocked()
+            index = next((i for i, m in enumerate(meals) if m["name"].lower() == original_name.lower()), None)
+            if index is None:
+                return self._send_json(404, {
+                    "error": f'"{original_name}" findes ikke længere — nogen har nok allerede ændret den. Genindlæs listen.'
+                })
+            renamed = updated["name"].lower() != original_name.lower()
+            if renamed and any(i != index and m["name"].lower() == updated["name"].lower() for i, m in enumerate(meals)):
+                return self._send_json(409, {"error": f'"{updated["name"]}" findes allerede'})
+            meals[index] = updated
+            save_meals_unlocked(meals)
+        self._send_json(200, {"ok": True, "meals": meals})
+
+    def _delete_meal(self, original_name):
+        with FILE_LOCK:
+            meals = load_meals_unlocked()
+            filtered = [m for m in meals if m["name"].lower() != original_name.lower()]
+            if len(filtered) != len(meals):
+                save_meals_unlocked(filtered)
+            meals = filtered
+        # Already gone (someone else deleted it too) is a benign race, not an error.
+        self._send_json(200, {"ok": True, "meals": meals})
 
     def _suggest_items(self, name):
         prompt = (
@@ -186,22 +254,23 @@ class Handler(BaseHTTPRequestHandler):
                 args, cwd=REPO_DIR, capture_output=True, text=True, timeout=30
             )
 
-        pull = run("git", "pull", "origin", "main", "--quiet", "--no-edit")
-        if pull.returncode != 0:
-            return {"ok": False, "step": "pull", "log": pull.stderr}
+        with FILE_LOCK:
+            pull = run("git", "pull", "origin", "main", "--quiet", "--no-edit")
+            if pull.returncode != 0:
+                return {"ok": False, "step": "pull", "log": pull.stderr}
 
-        status = run("git", "status", "--porcelain", "madbank.json")
-        if not status.stdout.strip():
-            return {"ok": True, "changed": False, "log": "Ingen ændringer at synkronisere."}
+            status = run("git", "status", "--porcelain", "madbank.json")
+            if not status.stdout.strip():
+                return {"ok": True, "changed": False, "log": "Ingen ændringer at synkronisere."}
 
-        run("git", "add", "madbank.json")
-        commit = run("git", "commit", "-q", "-m", "Opdater madbank via web-editor")
-        if commit.returncode != 0:
-            return {"ok": False, "step": "commit", "log": commit.stderr}
+            run("git", "add", "madbank.json")
+            commit = run("git", "commit", "-q", "-m", "Opdater madbank via web-editor")
+            if commit.returncode != 0:
+                return {"ok": False, "step": "commit", "log": commit.stderr}
 
-        push = run("git", "push", "origin", "main", "--quiet")
-        if push.returncode != 0:
-            return {"ok": False, "step": "push", "log": push.stderr}
+            push = run("git", "push", "origin", "main", "--quiet")
+            if push.returncode != 0:
+                return {"ok": False, "step": "push", "log": push.stderr}
 
         return {"ok": True, "changed": True, "log": "Sendt til GitHub — live om et øjeblik."}
 

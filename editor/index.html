@@ -242,8 +242,8 @@ function render() {
       <div class="field-label">Varer (én pr. linje)</div>
       <textarea id="items-${i}">${escapeHtml(m.items.join('\n'))}</textarea>
       <div class="meal-actions">
-        <button class="btn btn-danger" onclick="deleteMeal(${i})">Slet ret</button>
-        <button class="btn btn-primary" onclick="saveMeal(${i})">Gem ændring</button>
+        <button class="btn btn-danger" onclick='deleteMeal(${i}, ${JSON.stringify(m.name)})'>Slet ret</button>
+        <button class="btn btn-primary" onclick='saveMeal(${i}, ${JSON.stringify(m.name)})'>Gem ændring</button>
       </div>
     `;
 
@@ -260,51 +260,65 @@ function escapeAttr(s) {
   return escapeHtml(s).replace(/"/g, '&quot;');
 }
 
-async function persist(successMsg) {
-  const res = await fetch('/api/meals', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ meals })
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    setStatus(data.error || 'Fejl ved gemning', 'err');
+// Every mutation below is scoped to one dish and applied server-side against whatever is
+// currently on disk — never a whole-array overwrite of a possibly-stale local snapshot. That's
+// what makes it safe for two people to edit at the same time without one silently wiping the
+// other's new dishes.
+async function mutate(url, method, body, busyMsg) {
+  setStatus(busyMsg);
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      setStatus(data.error || 'Noget gik galt', 'err');
+      return false;
+    }
+    meals = data.meals;
+    return true;
+  } catch (e) {
+    setStatus('Kunne ikke kontakte serveren: ' + e, 'err');
     return false;
   }
-  setStatus(successMsg, 'ok');
-  return true;
 }
 
-function saveMeal(i) {
-  meals[i] = {
+async function saveMeal(i, originalName) {
+  const updated = {
     name: document.getElementById(`name-${i}`).value.trim(),
     recipeURL: document.getElementById(`url-${i}`).value.trim(),
     items: document.getElementById(`items-${i}`).value.split('\n').map(s => s.trim()).filter(Boolean)
   };
-  persist('Gemt lokalt — husk at synkronisere til GitHub.').then(ok => { if (ok) { openIndex = null; render(); } });
-}
-
-function deleteMeal(i) {
-  if (!confirm(`Slet "${meals[i].name}"?`)) return;
-  meals.splice(i, 1);
+  const ok = await mutate('/api/meals/' + encodeURIComponent(originalName), 'PUT', updated, 'Gemmer…');
+  if (!ok) return;
+  setStatus('Gemt — husk at synkronisere til GitHub.', 'ok');
   openIndex = null;
-  persist('Slettet lokalt — husk at synkronisere til GitHub.').then(() => render());
+  render();
 }
 
-function addMeal() {
+async function deleteMeal(i, name) {
+  if (!confirm(`Slet "${name}"?`)) return;
+  const ok = await mutate('/api/meals/' + encodeURIComponent(name), 'DELETE', null, 'Sletter…');
+  if (!ok) return;
+  setStatus('Slettet — husk at synkronisere til GitHub.', 'ok');
+  openIndex = null;
+  render();
+}
+
+async function addMeal() {
   const name = document.getElementById('newName').value.trim();
   const url = document.getElementById('newUrl').value.trim();
   const items = document.getElementById('newItems').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!name) { setStatus('Retten skal have et navn', 'err'); return; }
-  meals.push({ name, recipeURL: url, items });
-  persist('Tilføjet lokalt — husk at synkronisere til GitHub.').then(ok => {
-    if (ok) {
-      document.getElementById('newName').value = '';
-      document.getElementById('newUrl').value = '';
-      document.getElementById('newItems').value = '';
-      render();
-    }
-  });
+  const ok = await mutate('/api/meals', 'POST', { name, recipeURL: url, items }, 'Tilføjer…');
+  if (!ok) return;
+  document.getElementById('newName').value = '';
+  document.getElementById('newUrl').value = '';
+  document.getElementById('newItems').value = '';
+  setStatus('Tilføjet — husk at synkronisere til GitHub.', 'ok');
+  render();
 }
 
 async function suggestItems() {
@@ -350,6 +364,13 @@ async function syncToGitHub() {
 
 document.getElementById('search').addEventListener('input', render);
 load();
+
+// Light background refresh so you actually see what others just added, without needing to
+// remember to hit "Genindlæs" yourself. Skipped while an edit panel is open so it can't yank a
+// dish out from under you mid-edit.
+setInterval(() => {
+  if (openIndex === null) load();
+}, 8000);
 </script>
 
 </body>
