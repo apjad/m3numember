@@ -324,6 +324,14 @@
         "Ris",
         "Grøntsager"
       ]
+    },
+    {
+      "name": "oksemørbra",
+      "recipeURL": "",
+      "items": [
+        "oksemørbra",
+        "pomfritter"
+      ]
     }
   ]
 }
