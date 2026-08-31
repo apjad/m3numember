@@ -315,6 +315,19 @@
         "Rugebrød",
         "div pålæg"
       ]
+    },
+    {
+      "name": "mexicansk Lasagne",
+      "recipeURL": "",
+      "items": [
+        "Tortillas",
+        "Hakket oksekød",
+        "Tacokrydderi",
+        "Peberfrugt",
+        "Majs",
+        "Creme fraiche",
+        "Revet ost"
+      ]
     }
   ]
 }
