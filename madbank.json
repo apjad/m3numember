@@ -355,6 +355,33 @@
         "olivenolie",
         "frisk basilikum"
       ]
+    },
+    {
+      "name": "One-pot pasta med hakket oksekød",
+      "recipeURL": "",
+      "items": [
+        "hakket oksekød",
+        "pasta",
+        "løg",
+        "hvidløg",
+        "hakkede tomater",
+        "fløde",
+        "revet ost",
+        "bouillon"
+      ]
+    },
+    {
+      "name": "Svensk pølseret uden kartofler, fx med pasta",
+      "recipeURL": "",
+      "items": [
+        "Pølser",
+        "Bacon",
+        "Løg",
+        "Piskefløde",
+        "Ketchup",
+        "Sennep",
+        "Pasta"
+      ]
     }
   ]
 }
