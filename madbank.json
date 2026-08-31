@@ -504,7 +504,9 @@
     {
       "name": "Wolt",
       "recipeURL": "",
-      "items": []
+      "items": [
+        "Wolt"
+      ]
     }
   ]
 }
