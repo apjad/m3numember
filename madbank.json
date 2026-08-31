@@ -475,6 +475,20 @@
         "revet ost",
         "fløde"
       ]
+    },
+    {
+      "name": "Pitabrød med kebab",
+      "recipeURL": "",
+      "items": [
+        "pitabrød",
+        "kebabkød",
+        "icebergsalat",
+        "tomat",
+        "agurk",
+        "løg",
+        "kebabdressing",
+        "chilisauce"
+      ]
     }
   ]
 }
