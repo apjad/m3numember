@@ -421,6 +421,20 @@
         "salt",
         "peber"
       ]
+    },
+    {
+      "name": "Chili con carne",
+      "recipeURL": "",
+      "items": [
+        "hakket oksekød",
+        "løg",
+        "hvidløg",
+        "peberfrugt",
+        "hakkede tomater",
+        "kidneybønner",
+        "chili",
+        "krydderier"
+      ]
     }
   ]
 }
