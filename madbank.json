@@ -382,6 +382,18 @@
         "Sennep",
         "Pasta"
       ]
+    },
+    {
+      "name": "Risengrød",
+      "recipeURL": "",
+      "items": [
+        "grødris",
+        "sødmælk",
+        "salt",
+        "smør",
+        "sukker",
+        "kanel"
+      ]
     }
   ]
 }
