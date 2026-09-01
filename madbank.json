@@ -137,13 +137,17 @@
     },
     {
       "name": "Fiskefrikadeller",
-      "recipeURL": "",
+      "recipeURL": "https://www.valdemarsro.dk/fiskefrikadeller/",
       "items": [
         "Hakket svinekød",
         "Løg",
         "Æg",
         "Rasp",
-        "Mælk"
+        "Mælk",
+        "torsk",
+        "laks",
+        "dild",
+        "piskefløde"
       ]
     },
     {
