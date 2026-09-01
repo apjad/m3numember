@@ -599,6 +599,20 @@
         "Porre",
         "Knoldselleri"
       ]
+    },
+    {
+      "name": "Kartoffelsuppe med bacon",
+      "recipeURL": "",
+      "items": [
+        "kartofler",
+        "bacon",
+        "løg",
+        "porre",
+        "gulerødder",
+        "hønsebouillon",
+        "fløde",
+        "persille"
+      ]
     }
   ]
 }
