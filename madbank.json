@@ -627,6 +627,18 @@
         "smør",
         "ærter"
       ]
+    },
+    {
+      "name": "Biksemad",
+      "recipeURL": "",
+      "items": [
+        "Kartofler",
+        "Løg",
+        "Restekød",
+        "Æg",
+        "Syltede rødbeder",
+        "Smør"
+      ]
     }
   ]
 }
