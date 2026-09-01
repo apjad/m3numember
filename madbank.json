@@ -563,6 +563,18 @@
         "Hvidløg",
         "Sort peber"
       ]
+    },
+    {
+      "name": "Tærte med bacon",
+      "recipeURL": "",
+      "items": [
+        "tærtedej",
+        "bacon",
+        "æg",
+        "fløde",
+        "ost",
+        "løg"
+      ]
     }
   ]
 }
