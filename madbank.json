@@ -462,7 +462,7 @@
     },
     {
       "name": "Mørbradgryde med ris",
-      "recipeURL": "",
+      "recipeURL": "https://www.arla.dk/opskrifter/morbradgryde/",
       "items": [
         "Svinemørbrad",
         "Bacon",
@@ -470,7 +470,18 @@
         "Løg",
         "Fløde",
         "Paprika",
-        "Ris"
+        "Ris",
+        "Hvidløg",
+        "Tomatpuré",
+        "Tørret timian",
+        "Groft salt",
+        "Peber",
+        "Hakkede tomater",
+        "Piskefløde",
+        "Vand",
+        "Gulerødder",
+        "Cocktailpølser",
+        "Persille"
       ]
     },
     {
