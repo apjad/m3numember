@@ -25,12 +25,22 @@
     },
     {
       "name": "Kylling i karry",
-      "recipeURL": "",
+      "recipeURL": "https://www.arla.dk/opskrifter/kylling-i-karry/",
       "items": [
         "Kyllingefilet",
         "Karry",
         "Kokosmælk",
-        "Ris"
+        "Ris",
+        "Smør",
+        "Løg",
+        "Kyllingeinderfileter",
+        "Grøntsager",
+        "Hvedemel",
+        "Grøntsagsbouillon",
+        "Mælk",
+        "Groft salt",
+        "Peber",
+        "Æbler"
       ]
     },
     {
