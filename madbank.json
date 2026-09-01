@@ -613,6 +613,20 @@
         "fløde",
         "persille"
       ]
+    },
+    {
+      "name": "Kyllingefrikadeller med ris",
+      "recipeURL": "",
+      "items": [
+        "kyllingefars",
+        "ris",
+        "løg",
+        "æg",
+        "hvedemel",
+        "mælk",
+        "smør",
+        "ærter"
+      ]
     }
   ]
 }
