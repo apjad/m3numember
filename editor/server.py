@@ -18,10 +18,12 @@ up from agentclaude/m3numember-pages).
 import base64
 import json
 import os
+import re
 import subprocess
 import sys
 import threading
 import urllib.parse
+import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -157,6 +159,14 @@ class Handler(BaseHTTPRequestHandler):
             if not name:
                 return self._send_json(400, {"error": "Mangler navn på retten"})
             return self._send_json(200, self._suggest_items(name))
+        if self.path == "/api/suggest-items-from-url":
+            try:
+                url = self._read_json_body().get("url", "").strip()
+            except json.JSONDecodeError:
+                url = ""
+            if not url:
+                return self._send_json(400, {"error": "Mangler opskriftslink"})
+            return self._send_json(200, self._suggest_items_from_url(url))
         self.send_response(404)
         self.end_headers()
 
@@ -246,6 +256,52 @@ class Handler(BaseHTTPRequestHandler):
             items = json.loads(result.stdout)["structuredOutput"]["items"]
         except (json.JSONDecodeError, KeyError, TypeError):
             return {"ok": False, "error": "Kunne ikke aflæse svar fra AI"}
+        return {"ok": True, "items": [str(i).strip() for i in items if str(i).strip()]}
+
+    def _suggest_items_from_url(self, url):
+        if not url.startswith(("http://", "https://")):
+            url = "https://" + url
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15"
+            })
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                html = resp.read().decode(resp.headers.get_content_charset() or "utf-8", errors="replace")
+        except Exception as e:
+            return {"ok": False, "error": f"Kunne ikke hente siden: {e}"}
+
+        # Strip script/style blocks and collapse whitespace — cuts noise and token cost, the
+        # model can still make sense of the remaining tags/text to find the ingredient list.
+        text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", html)
+        text = re.sub(r"\s+", " ", text).strip()
+        text = text[:20000]
+
+        prompt = (
+            "Extract the ingredient list from this Danish recipe webpage (raw HTML/text below). "
+            "Respond with each ingredient as a short shopping-list-style item name, in Danish, "
+            "without quantities or units. Ignore navigation, ads, comments and unrelated content — "
+            "only the actual recipe's ingredients.\n\n" + text
+        )
+        schema = json.dumps({
+            "type": "object",
+            "properties": {"items": {"type": "array", "items": {"type": "string"}}},
+            "required": ["items"],
+        })
+        try:
+            result = subprocess.run(
+                [GROK_BIN, "-p", prompt, "--json-schema", schema, "--disable-web-search"],
+                capture_output=True, text=True, timeout=90,
+            )
+        except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+            return {"ok": False, "error": str(e)}
+        if result.returncode != 0:
+            return {"ok": False, "error": result.stderr.strip() or "grok fejlede"}
+        try:
+            items = json.loads(result.stdout)["structuredOutput"]["items"]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return {"ok": False, "error": "Kunne ikke aflæse svar fra AI"}
+        if not items:
+            return {"ok": False, "error": "Fandt ingen ingredienser på siden"}
         return {"ok": True, "items": [str(i).strip() for i in items if str(i).strip()]}
 
     def _run_sync(self):

@@ -171,6 +171,7 @@
     <textarea id="newItems" placeholder="Varer — én pr. linje"></textarea>
     <div class="meal-actions">
       <button class="btn btn-secondary" id="suggestBtn" onclick="suggestItems()">✨ Hent varer med AI</button>
+      <button class="btn btn-secondary" id="newUrlSuggestBtn" onclick="suggestItemsFromUrl(null)">✨ Hent ingredienser fra link</button>
       <button class="btn btn-primary" onclick="addMeal()">Tilføj</button>
     </div>
   </div>
@@ -242,6 +243,9 @@ function render() {
       <input type="text" id="url-${i}" value="${escapeAttr(m.recipeURL || '')}">
       <div class="field-label">Varer (én pr. linje)</div>
       <textarea id="items-${i}">${escapeHtml(m.items.join('\n'))}</textarea>
+      <div class="meal-actions">
+        <button class="btn btn-secondary" id="urlSuggestBtn-${i}" onclick="suggestItemsFromUrl(${i})">✨ Hent ingredienser fra link</button>
+      </div>
       <div class="meal-actions">
         <button class="btn btn-danger" onclick='deleteMeal(${i}, ${JSON.stringify(m.name)})'>Slet ret</button>
         <button class="btn btn-primary" onclick='saveMeal(${i}, ${JSON.stringify(m.name)})'>Gem ændring</button>
@@ -357,6 +361,42 @@ async function suggestItems() {
   } finally {
     btn.disabled = false;
     btn.textContent = '✨ Hent varer med AI';
+  }
+}
+
+// i === null means the "+ Tilføj ny ret" form; otherwise it's the row index of an existing dish
+// being edited. Fetches the actual recipe page and extracts its real ingredient list — unlike
+// suggestItems() above, which just guesses from the dish name.
+async function suggestItemsFromUrl(i) {
+  const urlField = i === null ? 'newUrl' : `url-${i}`;
+  const itemsField = i === null ? 'newItems' : `items-${i}`;
+  const btnId = i === null ? 'newUrlSuggestBtn' : `urlSuggestBtn-${i}`;
+  const url = document.getElementById(urlField).value.trim();
+  if (!url) { setStatus('Indsæt et opskriftslink først', 'err'); return; }
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  btn.textContent = 'Henter side…';
+  setStatus('Henter og læser opskriften på "' + url + '"…');
+  try {
+    const res = await fetch('/api/suggest-items-from-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      setStatus('Fejl: ' + data.error, 'err');
+      return;
+    }
+    const box = document.getElementById(itemsField);
+    const existing = box.value.split('\n').map(s => s.trim()).filter(Boolean);
+    box.value = Array.from(new Set([...existing, ...data.items])).join('\n');
+    setStatus('Ingredienser hentet fra opskriften — tjek listen før du gemmer.', 'ok');
+  } catch (e) {
+    setStatus('Kunne ikke kontakte AI: ' + e, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Hent ingredienser fra link';
   }
 }
 
