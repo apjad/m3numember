@@ -588,6 +588,17 @@
         "Taco-krydderi",
         "Creme fraiche"
       ]
+    },
+    {
+      "name": "Hønsekødssuppe med kødboller",
+      "recipeURL": "",
+      "items": [
+        "Suppe fra mou",
+        "kødboller fra mou",
+        "Gulerødder",
+        "Porre",
+        "Knoldselleri"
+      ]
     }
   ]
 }
