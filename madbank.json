@@ -550,6 +550,19 @@
         "Rasp",
         "Æg"
       ]
+    },
+    {
+      "name": "Pasta Carbonara",
+      "recipeURL": "",
+      "items": [
+        "Spaghetti",
+        "Bacon",
+        "Æg",
+        "Parmesan",
+        "Piskefløde",
+        "Hvidløg",
+        "Sort peber"
+      ]
     }
   ]
 }
