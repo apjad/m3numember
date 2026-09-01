@@ -87,11 +87,16 @@
     },
     {
       "name": "Stegt flæsk",
-      "recipeURL": "",
+      "recipeURL": "https://www.valdemarsro.dk/stegt-flaesk-med-persillesauce-2/",
       "items": [
-        "Flæsk",
-        "Kartofler",
-        "Persille"
+        "flæsk",
+        "kartofler",
+        "persille",
+        "smør",
+        "mel",
+        "mælk",
+        "salt",
+        "peber"
       ]
     },
     {
