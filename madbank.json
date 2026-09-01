@@ -46,30 +46,7 @@
     {
       "name": "Boller i karry",
       "recipeURL": "https://www.valdemarsro.dk/boller-i-karry/",
-      "items": [
-        "Hakket svinekød",
-        "Karry",
-        "løg",
-        "Ris",
-        "æg",
-        "hvergryn",
-        "spidskommen",
-        "hvedemel",
-        "grøntsagsbouillon",
-        "hakket kylling",
-        "hakket kalv og flæsk",
-        "rasp",
-        "mælk",
-        "salt",
-        "peber",
-        "smør",
-        "karry",
-        "hønsebouillon",
-        "piskefløde",
-        "kokosmælk",
-        "æble",
-        "ris"
-      ]
+      "items": []
     },
     {
       "name": "Burgere",
