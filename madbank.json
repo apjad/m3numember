@@ -400,15 +400,21 @@
     },
     {
       "name": "Svensk pølseret",
-      "recipeURL": "",
+      "recipeURL": "https://www.arla.dk/opskrifter/svensk-polseret/",
       "items": [
-        "Pølser",
-        "Bacon",
+        "Kartofler",
+        "Wienerpølser",
+        "Smør",
         "Løg",
-        "Piskefløde",
-        "Ketchup",
-        "Sennep",
-        "Pasta eller kartofler"
+        "Hvidløg",
+        "Tomatpuré",
+        "Mild paprika",
+        "Tomatketchup",
+        "Æblecidereddike",
+        "Madlavningsfløde",
+        "Groft salt",
+        "Peber",
+        "Purløg"
       ]
     },
     {
