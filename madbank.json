@@ -46,7 +46,23 @@
     {
       "name": "Boller i karry",
       "recipeURL": "https://www.arla.dk/opskrifter/boller-i-karry/",
-      "items": []
+      "items": [
+        "Hakket grise- og kalvekød",
+        "Groft salt",
+        "Løg",
+        "Hvidløg",
+        "Peber",
+        "Æg",
+        "Hvedemel",
+        "Mælk",
+        "Smør",
+        "Karry",
+        "Hønsebouillon-pulver",
+        "Æbler",
+        "Romainesalat",
+        "Slikærter",
+        "Parboiled ris"
+      ]
     },
     {
       "name": "Burgere",
