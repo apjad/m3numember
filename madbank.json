@@ -632,6 +632,20 @@
         "Syltede rødbeder",
         "Smør"
       ]
+    },
+    {
+      "name": "Pandekager",
+      "recipeURL": "https://www.arla.dk/opskrifter/pandekager/",
+      "items": [
+        "Hvedemel",
+        "Vaniljesukker",
+        "Stødt kardemomme",
+        "Groft salt",
+        "Citron",
+        "Mælk",
+        "Smør",
+        "Æg"
+      ]
     }
   ]
 }
