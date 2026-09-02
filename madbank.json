@@ -646,6 +646,21 @@
         "Smør",
         "Æg"
       ]
+    },
+    {
+      "name": "Sandwich med kylling",
+      "recipeURL": "https://madensverden.dk/sandwich-med-kylling-og-karry/#sandwich-med-kylling-og-karry",
+      "items": [
+        "bacon",
+        "purløg",
+        "karrydressing",
+        "sandwichboller",
+        "kyllingefilet",
+        "hjertesalat",
+        "tomater",
+        "løg",
+        "mayonnaise"
+      ]
     }
   ]
 }
