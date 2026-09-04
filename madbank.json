@@ -645,6 +645,7 @@
     {
       "name": "Pandekager",
       "recipeURL": "https://www.arla.dk/opskrifter/pandekager/",
+      "recipe": "1. Bland hvedemel, vaniljesukker, stødt kardemomme, salt og citronskal.\n2. Pisk mælk i, indtil dejen er klumpfri.\n3. Smelt smørret og rør det i dejen.\n4. Pisk æggene i.\n5. Bag tynde pandekager på en varm pande, til de er gyldne på begge sider.",
       "items": [
         "Hvedemel",
         "Vaniljesukker",
