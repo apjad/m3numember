@@ -139,17 +139,6 @@
       ]
     },
     {
-      "name": "Fiskefrikadeller",
-      "recipeURL": "https://www.valdemarsro.dk/fiskefrikadeller/",
-      "recipe": "Ingredients\n* 500 g hakket svinekød\n* 2 spsk hvedemel\n* 2 spsk finvalset havregryn\n* 1 dl mælk\n* 1 æggehvider\n* 1 æg\n* 1 løg, finthakket\n* 1 fed hvidløg, finthakket\n* 1 tsk tørret timian\n* ½ tsk stødt spidskommen\n* salt og friskkværnet peber\n* 3 spsk olivenolie, til stegning\n* 1 spsk smør, til stegning\nSteps\n1. Rør alle ingredienserne med en håndmikser i 2-3 minutter.\n2. Lad frikadellefarsen hvile i minimum en halv time i køleskabet.\n3. Form frikadellerne og steg dem på en pande med smør og olie ved middelvarme i cirka 5 minutter på hver side, til de er gennemstegte.",
-      "items": [
-        "torsk",
-        "laks",
-        "dild",
-        "piskefløde"
-      ]
-    },
-    {
       "name": "Tortilla med oksekød",
       "recipeURL": "",
       "items": [
