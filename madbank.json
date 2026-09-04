@@ -660,6 +660,7 @@
     {
       "name": "Sandwich med kylling",
       "recipeURL": "https://madensverden.dk/sandwich-med-kylling-og-karry/#sandwich-med-kylling-og-karry",
+      "recipe": "1. Steg bacon sprødt.\n2. Bland karrydressing.\n3. Læg kylling, bacon og dressing i sandwichbrødet.\n4. Drys med purløg og server.",
       "items": [
         "bacon",
         "purløg",
