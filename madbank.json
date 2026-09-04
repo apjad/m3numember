@@ -474,6 +474,7 @@
     {
       "name": "Mørbradgryde med ris",
       "recipeURL": "https://www.arla.dk/opskrifter/morbradgryde/",
+      "recipe": "1. Svits bacon, mørbrad, løg, hvidløg og champignon.\n2. Tilsæt tomatpuré, paprika, timian, salt og peber.\n3. Hæld hakkede tomater, fløde og vand i, og tilsæt gulerødder.\n4. Lad gryden simre, til mørbrad og gulerødder er møre.\n5. Tilsæt cocktailpølser, og varm dem igennem.\n6. Pynt med persille, og server med ris.",
       "items": [
         "Svinemørbrad",
         "Bacon",
