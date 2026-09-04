@@ -169,6 +169,7 @@
     <input type="text" id="newName" placeholder="Navn på retten">
     <input type="text" id="newUrl" placeholder="Opskriftslink (valgfrit)">
     <textarea id="newItems" placeholder="Varer — én pr. linje"></textarea>
+    <textarea id="newRecipe" placeholder="Opskrift / fremgangsmåde (valgfrit)"></textarea>
     <div class="meal-actions">
       <button class="btn btn-secondary" id="suggestBtn" onclick="suggestItems()">✨ Hent varer med AI</button>
       <button class="btn btn-secondary" id="newUrlSuggestBtn" onclick="suggestItemsFromUrl(null)">✨ Hent ingredienser fra link</button>
@@ -228,7 +229,7 @@ function render() {
     head.innerHTML = `
       <div>
         <div class="meal-title">${escapeHtml(m.name)}</div>
-        <div class="meal-count">${m.items.length} varer${m.recipeURL ? ' · har opskriftslink' : ''}</div>
+        <div class="meal-count">${m.items.length} varer${m.recipeURL ? ' · har opskriftslink' : ''}${m.recipe ? ' · har opskrift' : ''}</div>
       </div>
       <div class="chevron">▶</div>
     `;
@@ -246,6 +247,8 @@ function render() {
       <div class="meal-actions">
         <button class="btn btn-secondary" id="urlSuggestBtn-${i}" onclick="suggestItemsFromUrl(${i})">✨ Hent ingredienser fra link</button>
       </div>
+      <div class="field-label">Opskrift / fremgangsmåde</div>
+      <textarea id="recipe-${i}" placeholder="Valgfrit">${escapeHtml(m.recipe || '')}</textarea>
       <div class="meal-actions">
         <button class="btn btn-danger" onclick='deleteMeal(${i}, ${JSON.stringify(m.name)})'>Slet ret</button>
         <button class="btn btn-primary" onclick='saveMeal(${i}, ${JSON.stringify(m.name)})'>Gem ændring</button>
@@ -302,6 +305,7 @@ async function saveMeal(i, originalName) {
   const updated = {
     name: document.getElementById(`name-${i}`).value.trim(),
     recipeURL: document.getElementById(`url-${i}`).value.trim(),
+    recipe: document.getElementById(`recipe-${i}`).value.trim(),
     items: document.getElementById(`items-${i}`).value.split('\n').map(s => s.trim()).filter(Boolean)
   };
   const data = await mutate('/api/meals/' + encodeURIComponent(originalName), 'PUT', updated, 'Gemmer…');
@@ -323,12 +327,14 @@ async function deleteMeal(i, name) {
 async function addMeal() {
   const name = document.getElementById('newName').value.trim();
   const url = document.getElementById('newUrl').value.trim();
+  const recipe = document.getElementById('newRecipe').value.trim();
   const items = document.getElementById('newItems').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!name) { setStatus('Retten skal have et navn', 'err'); return; }
-  const data = await mutate('/api/meals', 'POST', { name, recipeURL: url, items }, 'Tilføjer…');
+  const data = await mutate('/api/meals', 'POST', { name, recipeURL: url, recipe, items }, 'Tilføjer…');
   if (!data) return;
   document.getElementById('newName').value = '';
   document.getElementById('newUrl').value = '';
+  document.getElementById('newRecipe').value = '';
   document.getElementById('newItems').value = '';
   setStatus(syncMessage('Tilføjet.', data.sync), data.sync && !data.sync.ok ? 'err' : 'ok');
   render();

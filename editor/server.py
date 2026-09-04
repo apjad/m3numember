@@ -68,8 +68,9 @@ def clean_meal(meal, index_label):
     if not name:
         raise ValueError(f"{index_label} mangler et navn")
     recipe_url = str(meal.get("recipeURL", "")).strip()
+    recipe = str(meal.get("recipe", "")).strip()
     items = [str(item).strip() for item in meal.get("items", []) if str(item).strip()]
-    return {"name": name, "recipeURL": recipe_url, "items": items}
+    return {"name": name, "recipeURL": recipe_url, "recipe": recipe, "items": items}
 
 
 def load_meals_unlocked():
