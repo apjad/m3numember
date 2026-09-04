@@ -278,15 +278,21 @@ class Handler(BaseHTTPRequestHandler):
         text = text[:20000]
 
         prompt = (
-            "Extract the ingredient list from this Danish recipe webpage (raw HTML/text below). "
-            "Respond with each ingredient as a short shopping-list-style item name, in Danish, "
-            "without quantities or units. Ignore navigation, ads, comments and unrelated content — "
-            "only the actual recipe's ingredients.\n\n" + text
+            "Extract from this Danish recipe webpage (raw HTML/text below): "
+            "1) the ingredient list, each as a short shopping-list-style item name, in Danish, "
+            "without quantities or units. "
+            "2) the fremgangsmåde (method/steps), as short numbered steps in Danish — the core "
+            "action of each step, not restated ingredient quantities. Empty string if the page "
+            "has no real recipe steps. "
+            "Ignore navigation, ads, comments and unrelated content.\n\n" + text
         )
         schema = json.dumps({
             "type": "object",
-            "properties": {"items": {"type": "array", "items": {"type": "string"}}},
-            "required": ["items"],
+            "properties": {
+                "items": {"type": "array", "items": {"type": "string"}},
+                "recipe": {"type": "string"},
+            },
+            "required": ["items", "recipe"],
         })
         try:
             result = subprocess.run(
@@ -298,12 +304,14 @@ class Handler(BaseHTTPRequestHandler):
         if result.returncode != 0:
             return {"ok": False, "error": result.stderr.strip() or "grok fejlede"}
         try:
-            items = json.loads(result.stdout)["structuredOutput"]["items"]
+            structured = json.loads(result.stdout)["structuredOutput"]
+            items = structured["items"]
+            recipe = str(structured.get("recipe", "")).strip()
         except (json.JSONDecodeError, KeyError, TypeError):
             return {"ok": False, "error": "Kunne ikke aflæse svar fra AI"}
         if not items:
             return {"ok": False, "error": "Fandt ingen ingredienser på siden"}
-        return {"ok": True, "items": [str(i).strip() for i in items if str(i).strip()]}
+        return {"ok": True, "items": [str(i).strip() for i in items if str(i).strip()], "recipe": recipe}
 
     def _run_sync(self):
         def run(*args):
