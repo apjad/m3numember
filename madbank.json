@@ -401,6 +401,7 @@
     {
       "name": "Svensk pølseret",
       "recipeURL": "https://www.arla.dk/opskrifter/svensk-polseret/",
+      "recipe": "1. Skær kartofler og pølser i skiver.\n2. Svits løg og hvidløg i smør.\n3. Rør tomatpuré, paprika, ketchup og eddike i.\n4. Tilsæt fløde og kog saucen op.\n5. Vend kartofler og pølser i saucen og varm igennem.\n6. Smag til med salt og peber.\n7. Pynt med purløg.",
       "items": [
         "Kartofler",
         "Wienerpølser",
