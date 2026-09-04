@@ -85,6 +85,7 @@
     {
       "name": "Stegt flæsk",
       "recipeURL": "https://www.valdemarsro.dk/stegt-flaesk-med-persillesauce-2/",
+      "recipe": "1. Skær flæsket i skiver og steg det i ovnen, indtil det er sprødt.\n2. Kog kartoflerne møre.\n3. Hak persillen fint.\n4. Smelt smør, rør melet i og pisk mælken i, til saucen tykner.\n5. Rør persillen i saucen og smag til med salt og peber.\n6. Server flæsket med kartofler og persillesauce.",
       "items": [
         "flæsk",
         "kartofler",
