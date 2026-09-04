@@ -661,14 +661,6 @@
         "løg",
         "mayonnaise"
       ]
-    },
-    {
-      "name": "__smoketest__",
-      "recipeURL": "",
-      "recipe": "Trin 1\nTrin 2",
-      "items": [
-        "vare a"
-      ]
     }
   ]
 }
